@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Voitures de Légendes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Barlow:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noir:    #090909;
+  --gris1:   #111111;
+  --gris2:   #1c1c1c;
+  --gris3:   #252525;
+  --rouge:   #c0192b;
+  --or:      #b89640;
+  --or2:     #d4af60;
+  --chrome:  #b8b8b8;
+  --texte:   #e8e0d0;
+  --texte2:  #888880;
+  --texte3:  #555550;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  height: 100%;
+  background: var(--noir);
+  overflow: hidden;
+}
+
+#app {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--noir);
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════════ */
+.header {
+  padding-top: calc(14px + env(safe-area-inset-top));
+  background: var(--noir);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  padding: 0 14px 10px;
+  gap: 10px;
+}
+
+.btn-icon {
+  width: 34px; height: 34px;
+  background: transparent;
+  border: none;
+  color: var(--chrome);
+  font-size: 19px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.btn-icon:active { background: #2a2a2a; }
+
+.header-center {
+  flex: 1;
+  text-align: center;
+}
+.header-center h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 4px;
+  color: var(--texte);
+  line-height: 1;
+}
+.header-center .sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--or);
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  border-top: 1px solid #1e1e1e;
+}
+.tab {
+  flex: 1;
+  padding: 8px 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--texte3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab.active { color: var(--or); border-bottom-color: var(--or); }
+
+/* FILTERS */
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--noir);
+  border-bottom: 1px solid #191919;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+
+.fbtn {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid #2e2e2e;
+  color: var(--texte2);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.fbtn.active {
+  background: var(--rouge);
+  border-color: var(--rouge);
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════════
+   MAIN SCROLL
+══════════════════════════════════════════════ */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
+
+/* ══════════════════════════════════════════════
+   LISTE — style Avions de Légende
+══════════════════════════════════════════════ */
+.car-list {
+  padding: 0;
+}
+
+.car-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid #181818;
+  cursor: pointer;
+  transition: background 0.15s;
+  min-height: 88px;
+}
+.car-row:active { background: #151515; }
+
+/* Vignette photo */
+.car-thumb {
+  width: 120px;
+  min-height: 88px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  background: var(--gris1);
+}
+.car-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.car-thumb-ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: linear-gradient(135deg, #0e0e0e 0%, #181818 100%);
+  position: absolute;
+  top: 0; left: 0;
+}
+.era-tag {
+  position: absolute;
+  bottom: 4px; left: 4px;
+  background: rgba(0,0,0,0.72);
+  color: var(--or);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 2px 5px;
+  text-transform: uppercase;
+}
+.flag-tag {
+  position: absolute;
+  top: 4px; right: 4px;
+  font-size: 14px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8));
+}
+
+/* Texte */
+.car-meta {
+  flex: 1;
+  padding: 10px 12px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+.car-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--rouge);
+}
+.car-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  color: var(--texte);
+  line-height: 1.15;
+}
+.car-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  color: var(--texte2);
+  letter-spacing: 0.3px;
+}
+.car-chevron {
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+  color: var(--texte3);
+  font-size: 16px;
+}
+
+/* ══════════════════════════════════════════════
+   OVERLAY DÉTAIL
+══════════════════════════════════════════════ */
+.overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--noir);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.overlay.open { transform: translateX(0); }
+
+.ov-header {
+  padding-top: calc(12px + env(safe-area-inset-top));
+  padding-bottom: 10px;
+  padding-left: 12px;
+  padding-right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--noir);
+  flex-shrink: 0;
+  border-bottom: 1px solid #1e1e1e;
+}
+.ov-back {
+  font-size: 26px;
+  background: transparent;
+  border: none;
+  color: var(--chrome);
+  cursor: pointer;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.ov-title-wrap { flex: 1; overflow: hidden; }
+.ov-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--rouge);
+  text-transform: uppercase;
+}
+.ov-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--texte);
+  line-height: 1.05;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ov-lang-btn {
+  width: 32px; height: 32px;
+  background: transparent;
+  border: 1px solid #2e2e2e;
+  border-radius: 50%;
+  font-size: 17px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.ov-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+
+/* Hero photo */
+.ov-hero {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--gris1);
+  overflow: hidden;
+  position: relative;
+}
+.ov-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ov-hero-ph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+}
+
+/* Bande dorée sous la photo */
+.ov-gold-bar {
+  height: 2px;
+  background: linear-gradient(to right, var(--rouge), var(--or), transparent);
+}
+
+/* Contenu texte */
+.ov-content { padding: 14px 16px; }
+
+/* Specs grid 2×2 */
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.spec-box {
+  background: var(--gris2);
+  border-radius: 3px;
+  padding: 9px 10px;
+  border-left: 2px solid var(--rouge);
+}
+.spec-lbl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--texte3);
+  text-transform: uppercase;
+}
+.spec-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--texte);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+.sep-line {
+  height: 1px;
+  background: linear-gradient(to right, var(--or) 0%, transparent 60%);
+  margin-bottom: 13px;
+}
+
+.ov-text {
+  font-family: 'Barlow', sans-serif;
+  font-size: 13.5px;
+  line-height: 1.72;
+  color: #aaa8a0;
+}
+.ov-text.chargement { color: var(--texte3); font-style: italic; }
+
+.wiki-link {
+  margin-top: 12px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  color: var(--texte3);
+}
+.wiki-link span {
+  color: var(--or);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--texte3);
+}
+
+/* ══════════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════════ */
+.quiz-wrap {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.quiz-start-area {
+  text-align: center;
+  padding: 24px 0 12px;
+}
+.quiz-icon { font-size: 52px; }
+.quiz-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 3px;
+  margin: 8px 0 4px;
+}
+.quiz-subtitle { font-size: 12px; color: var(--texte2); margin-bottom: 20px; }
+.btn-start {
+  width: 100%;
+  padding: 14px;
+  background: var(--rouge);
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 3px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.quiz-card {
+  background: var(--gris2);
+  border-radius: 4px;
+  border: 1px solid #2a2a2a;
+  padding: 14px;
+}
+.quiz-prog {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--or);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.quiz-q {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.quiz-img-wrap {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--gris1);
+  margin-bottom: 12px;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.quiz-img-wrap img { width:100%; height:100%; object-fit:cover; }
+.quiz-img-wrap .quiz-ph { font-size: 52px; }
+.quiz-opts { display: flex; flex-direction: column; gap: 7px; }
+.quiz-opt {
+  padding: 9px 14px;
+  background: var(--gris1);
+  border: 1px solid #2e2e2e;
+  color: var(--texte);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  text-align: left;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.quiz-opt:disabled { cursor: default; }
+.quiz-opt.ok  { background: #162816; border-color: #3a6a3a; color: #7ac87a; }
+.quiz-opt.ko  { background: #281616; border-color: #6a3a3a; color: #c87a7a; }
+.quiz-next-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 9px;
+  background: transparent;
+  border: 1px solid var(--or);
+  color: var(--or);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  display: none;
+}
+.quiz-score-wrap {
+  text-align: center;
+  padding: 30px 20px;
+}
+.score-medal { font-size: 64px; }
+.score-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  line-height: 1;
+  color: var(--or);
+}
+.score-label { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:2px; color:var(--texte2); text-transform:uppercase; margin-bottom:18px; }
+
+/* ══════════════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════════════ */
+.settings-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  z-index: 200;
+  display: none;
+}
+.settings-bg.open { display: block; }
+.settings-sheet {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: #161616;
+  border-radius: 14px 14px 0 0;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.settings-handle {
+  width: 34px; height: 4px;
+  background: #333;
+  border-radius: 2px;
+  margin: 10px auto 12px;
+}
+.settings-ttl {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--or);
+  padding: 0 16px 10px;
+  border-bottom: 1px solid #242424;
+}
+.settings-body { padding: 10px 16px; }
+.settings-sec-ttl {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--texte3);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.app-items { display: flex; flex-direction: column; gap: 9px; }
+.app-item {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.app-item img {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: #2a2a2a;
+  flex-shrink: 0;
+}
+.app-item-info { flex: 1; }
+.app-item-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--texte);
+}
+.app-item-sub { font-size:11px; color:var(--texte2); }
+.store-badge-img {
+  display: block;
+  height: 34px;
+  margin: 14px auto 0;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 26px; height: 26px;
+  border: 2px solid #2a2a2a;
+  border-top-color: var(--or);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+@keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <button class="btn-icon" id="btn-lang-main" onclick="toggleLang()">🇫🇷</button>
+      <div class="header-center">
+        <h1>VOITURES DE LÉGENDES</h1>
+        <div class="sub" id="sub-count">27 Icônes de l'Automobile</div>
+      </div>
+      <button class="btn-icon" onclick="openSettings()">⚙️</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" id="tab-liste"  onclick="switchTab('liste')">
+        <span id="t-liste">Collection</span></button>
+      <button class="tab"        id="tab-quiz"   onclick="switchTab('quiz')">Quiz</button>
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="main"></div>
+
+</div><!-- #app -->
+
+<!-- OVERLAY DÉTAIL -->
+<div class="overlay" id="overlay">
+  <div class="ov-header">
+    <button class="ov-back" onclick="closeDetail()">‹</button>
+    <div class="ov-title-wrap">
+      <div class="ov-brand" id="ov-brand"></div>
+      <div class="ov-name"  id="ov-name"></div>
+    </div>
+    <button class="ov-lang-btn" id="ov-lang-btn" onclick="toggleOvLang()">🇫🇷</button>
+  </div>
+  <div class="ov-body" id="ov-body">
+    <div class="ov-hero" id="ov-hero">
+      <div class="ov-hero-ph" id="ov-hero-ph"></div>
+    </div>
+    <div class="ov-gold-bar"></div>
+    <div class="ov-content">
+      <div class="specs-grid" id="ov-specs"></div>
+      <div class="sep-line"></div>
+      <p class="ov-text chargement" id="ov-text">Chargement…</p>
+      <p class="wiki-link" id="ov-link"></p>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="settings-bg" id="settings-bg" onclick="closeSettings()">
+  <div class="settings-sheet" onclick="event.stopPropagation()">
+    <div class="settings-handle"></div>
+    <div class="settings-ttl">Nos Applications</div>
+    <div class="settings-body">
+      <div class="settings-sec-ttl">À découvrir</div>
+      <div class="app-items" id="app-items"></div>
+    </div>
+    <img class="store-badge-img"
+         src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/fr-fr"
+         alt="App Store" onclick="window.open('https://apps.apple.com/developer/michel-garlandat','_system')">
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DONNÉES
+═══════════════════════════════════════════ */
+const CARS = [
+  {
+    id:1, brand:"BMW", name:"Isetta", years:"1955–1962", era:"50s", flag:"🇩🇪", emoji:"🚗",
+    wiki_fr:"BMW_Isetta", wiki_en:"BMW_Isetta",
+    specs_fr:{Pays:"Allemagne", Moteur:"250–300 cm³", "Vitesse max":"85 km/h", Production:"161 728"},
+    specs_en:{Country:"Germany", Engine:"250–300 cc",  "Top speed":"85 km/h",  Production:"161,728"},
+  },
+  {
+    id:2, brand:"Volkswagen", name:"Coccinelle", years:"1938–2003", era:"40s", flag:"🇩🇪", emoji:"🐞",
+    wiki_fr:"Volkswagen_Coccinelle", wiki_en:"Volkswagen_Beetle",
+    specs_fr:{Pays:"Allemagne", Moteur:"1 131–1 600 cm³", "Vitesse max":"130 km/h", Production:"21 529 464"},
+    specs_en:{Country:"Germany", Engine:"1,131–1,600 cc", "Top speed":"130 km/h", Production:"21,529,464"},
+  },
+  {
+    id:3, brand:"Volkswagen", name:"Combi T1", years:"1950–1967", era:"50s", flag:"🇩🇪", emoji:"🚐",
+    wiki_fr:"Volkswagen_Combi_(type_2)", wiki_en:"Volkswagen_Type_2",
+    specs_fr:{Pays:"Allemagne", Moteur:"1 131–1 500 cm³", "Vitesse max":"115 km/h", Production:"1 833 000"},
+    specs_en:{Country:"Germany", Engine:"1,131–1,500 cc", "Top speed":"115 km/h", Production:"1,833,000"},
+  },
+  {
+    id:4, brand:"Citroën", name:"Traction Avant", years:"1934–1957", era:"30s", flag:"🇫🇷", emoji:"🚙",
+    wiki_fr:"Citroën_Traction_Avant", wiki_en:"Citroën_Traction_Avant",
+    specs_fr:{Pays:"France", Moteur:"1 303–1 911 cm³", "Vitesse max":"120 km/h", Production:"760 000"},
+    specs_en:{Country:"France", Engine:"1,303–1,911 cc", "Top speed":"120 km/h", Production:"760,000"},
+  },
+  {
+    id:5, brand:"Citroën", name:"2 CV", years:"1948–1990", era:"40s", flag:"🇫🇷", emoji:"🐌",
+    wiki_fr:"Citroën_2_CV", wiki_en:"Citroën_2CV",
+    specs_fr:{Pays:"France", Moteur:"375–602 cm³", "Vitesse max":"115 km/h", Production:"5 114 966"},
+    specs_en:{Country:"France", Engine:"375–602 cc",  "Top speed":"115 km/h", Production:"5,114,966"},
+  },
+  {
+    id:6, brand:"Citroën", name:"DS", years:"1955–1975", era:"50s", flag:"🇫🇷", emoji:"🛸",
+    wiki_fr:"Citroën_DS", wiki_en:"Citroën_DS",
+    specs_fr:{Pays:"France", Moteur:"1 911–2 347 cm³", "Vitesse max":"185 km/h", Production:"1 455 746"},
+    specs_en:{Country:"France", Engine:"1,911–2,347 cc", "Top speed":"185 km/h", Production:"1,455,746"},
+  },
+  {
+    id:7, brand:"Citroën", name:"SM", years:"1970–1975", era:"70s", flag:"🇫🇷", emoji:"🎭",
+    wiki_fr:"Citroën_SM", wiki_en:"Citroën_SM",
+    specs_fr:{Pays:"France", Moteur:"2 670–2 965 cm³", "Vitesse max":"220 km/h", Production:"12 920"},
+    specs_en:{Country:"France", Engine:"2,670–2,965 cc", "Top speed":"220 km/h", Production:"12,920"},
+  },
+  {
+    id:8, brand:"Citroën", name:"Type H", years:"1947–1981", era:"40s", flag:"🇫🇷", emoji:"🚚",
+    wiki_fr:"Citroën_Type_H", wiki_en:"Citroën_H_Van",
+    specs_fr:{Pays:"France", Moteur:"1 628–1 911 cm³", "Vitesse max":"100 km/h", Production:"473 289"},
+    specs_en:{Country:"France", Engine:"1,628–1,911 cc", "Top speed":"100 km/h", Production:"473,289"},
+  },
+  {
+    id:9, brand:"Fiat", name:"500", years:"1957–1975", era:"50s", flag:"🇮🇹", emoji:"🇮🇹",
+    wiki_fr:"Fiat_500_(1957)", wiki_en:"Fiat_500_(1957)",
+    specs_fr:{Pays:"Italie", Moteur:"479–594 cm³", "Vitesse max":"95 km/h", Production:"3 893 294"},
+    specs_en:{Country:"Italy", Engine:"479–594 cc",  "Top speed":"95 km/h", Production:"3,893,294"},
+  },
+  {
+    id:10, brand:"Pontiac", name:"GTO", years:"1964–1974", era:"60s", flag:"🇺🇸", emoji:"🏎️",
+    wiki_fr:"Pontiac_GTO", wiki_en:"Pontiac_GTO",
+    specs_fr:{Pays:"États-Unis", Moteur:"6 374–7 456 cm³", "Vitesse max":"210 km/h", Production:"514 000"},
+    specs_en:{Country:"USA", Engine:"6,374–7,456 cc",  "Top speed":"210 km/h", Production:"514,000"},
+  },
+  {
+    id:11, brand:"Ford", name:"Mustang", years:"1964–présent", era:"60s", flag:"🇺🇸", emoji:"🐎",
+    wiki_fr:"Ford_Mustang_(première_génération)", wiki_en:"Ford_Mustang",
+    specs_fr:{Pays:"États-Unis", Moteur:"2 300–7 600 cm³", "Vitesse max":"250 km/h", Production:"10 000 000+"},
+    specs_en:{Country:"USA", Engine:"2,300–7,600 cc", "Top speed":"250 km/h", Production:"10,000,000+"},
+  },
+  {
+    id:12, brand:"Alfa Romeo", name:"Giulietta Sprint", years:"1954–1965", era:"50s", flag:"🇮🇹", emoji:"🍀",
+    wiki_fr:"Alfa_Romeo_Giulietta_(1954)", wiki_en:"Alfa_Romeo_Giulietta_(750/101)",
+    specs_fr:{Pays:"Italie", Moteur:"1 290 cm³", "Vitesse max":"165 km/h", Production:"177 690"},
+    specs_en:{Country:"Italy", Engine:"1,290 cc", "Top speed":"165 km/h", Production:"177,690"},
+  },
+  {
+    id:13, brand:"Austin-Healey", name:"3000", years:"1959–1968", era:"60s", flag:"🇬🇧", emoji:"🇬🇧",
+    wiki_fr:"Austin-Healey_3000", wiki_en:"Austin-Healey_3000",
+    specs_fr:{Pays:"Royaume-Uni", Moteur:"2 912 cm³", "Vitesse max":"185 km/h", Production:"42 926"},
+    specs_en:{Country:"UK", Engine:"2,912 cc", "Top speed":"185 km/h", Production:"42,926"},
+  },
+  {
+    id:14, brand:"Mercedes-Benz", name:"450 SL", years:"1971–1989", era:"70s", flag:"🇩🇪", emoji:"⭐",
+    wiki_fr:"Mercedes-Benz_450_SL", wiki_en:"Mercedes-Benz_R107_and_C107",
+    specs_fr:{Pays:"Allemagne", Moteur:"3 818–5 547 cm³", "Vitesse max":"217 km/h", Production:"237 287"},
+    specs_en:{Country:"Germany", Engine:"3,818–5,547 cc", "Top speed":"217 km/h", Production:"237,287"},
+  },
+  {
+    id:15, brand:"Jaguar", name:"Type E", years:"1961–1975", era:"60s", flag:"🇬🇧", emoji:"🐆",
+    wiki_fr:"Jaguar_Type_E", wiki_en:"Jaguar_E-Type",
+    specs_fr:{Pays:"Royaume-Uni", Moteur:"3 781–5 343 cm³", "Vitesse max":"241 km/h", Production:"72 520"},
+    specs_en:{Country:"UK", Engine:"3,781–5,343 cc", "Top speed":"241 km/h", Production:"72,520"},
+  },
+  {
+    id:16, brand:"Shelby", name:"Cobra", years:"1962–1967", era:"60s", flag:"🇺🇸", emoji:"🐍",
+    wiki_fr:"AC_Cobra", wiki_en:"AC_Cobra",
+    specs_fr:{Pays:"USA / Royaume-Uni", Moteur:"4 261–7 013 cm³", "Vitesse max":"265 km/h", Production:"998"},
+    specs_en:{Country:"USA / UK", Engine:"4,261–7,013 cc", "Top speed":"265 km/h", Production:"998"},
+  },
+  {
+    id:17, brand:"Ferrari", name:"Portofino", years:"2017–2023", era:"2010s", flag:"🇮🇹", emoji:"🐴",
+    wiki_fr:"Ferrari_Portofino", wiki_en:"Ferrari_Portofino",
+    specs_fr:{Pays:"Italie", Moteur:"3 855 cm³ V8T", "Vitesse max":"320 km/h", Production:"—"},
+    specs_en:{Country:"Italy", Engine:"3,855 cc V8T",  "Top speed":"320 km/h", Production:"—"},
+  },
+  {
+    id:18, brand:"Aston Martin", name:"DB11 Volante", years:"2018–présent", era:"2010s", flag:"🇬🇧", emoji:"🕊️",
+    wiki_fr:"Aston_Martin_DB11", wiki_en:"Aston_Martin_DB11",
+    specs_fr:{Pays:"Royaume-Uni", Moteur:"3 982–5 204 cm³", "Vitesse max":"301 km/h", Production:"—"},
+    specs_en:{Country:"UK", Engine:"3,982–5,204 cc", "Top speed":"301 km/h", Production:"—"},
+  },
+  {
+    id:19, brand:"Porsche", name:"911", years:"1963–présent", era:"60s", flag:"🇩🇪", emoji:"⚡",
+    wiki_fr:"Porsche_911", wiki_en:"Porsche_911",
+    specs_fr:{Pays:"Allemagne", Moteur:"1 991–3 800 cm³", "Vitesse max":"300 km/h", Production:"1 000 000+"},
+    specs_en:{Country:"Germany", Engine:"1,991–3,800 cc", "Top speed":"300 km/h", Production:"1,000,000+"},
+  },
+  {
+    id:20, brand:"Lamborghini", name:"Miura", years:"1966–1973", era:"60s", flag:"🇮🇹", emoji:"🐂",
+    wiki_fr:"Lamborghini_Miura", wiki_en:"Lamborghini_Miura",
+    specs_fr:{Pays:"Italie", Moteur:"3 929 cm³ V12", "Vitesse max":"274 km/h", Production:"764"},
+    specs_en:{Country:"Italy", Engine:"3,929 cc V12", "Top speed":"274 km/h", Production:"764"},
+  },
+  {
+    id:21, brand:"Volkswagen", name:"Golf Cabriolet", years:"1979–2016", era:"80s", flag:"🇩🇪", emoji:"🌊",
+    wiki_fr:"Volkswagen_Golf_I", wiki_en:"Volkswagen_Golf_Mk1",
+    specs_fr:{Pays:"Allemagne", Moteur:"1 457–1 781 cm³", "Vitesse max":"175 km/h", Production:"388 000"},
+    specs_en:{Country:"Germany", Engine:"1,457–1,781 cc", "Top speed":"175 km/h", Production:"388,000"},
+  },
+  {
+    id:22, brand:"Panhard", name:"Dyna Z", years:"1954–1965", era:"50s", flag:"🇫🇷", emoji:"🦋",
+    wiki_fr:"Panhard_Dyna_Z", wiki_en:"Panhard_Dyna_Z",
+    specs_fr:{Pays:"France", Moteur:"851 cm³", "Vitesse max":"130 km/h", Production:"149 267"},
+    specs_en:{Country:"France", Engine:"851 cc", "Top speed":"130 km/h", Production:"149,267"},
+  },
+  {
+    id:23, brand:"Renault", name:"Estafette", years:"1959–1980", era:"60s", flag:"🇫🇷", emoji:"📦",
+    wiki_fr:"Renault_Estafette", wiki_en:"Renault_Estafette",
+    specs_fr:{Pays:"France", Moteur:"845–1 108 cm³", "Vitesse max":"110 km/h", Production:"316 000"},
+    specs_en:{Country:"France", Engine:"845–1,108 cc", "Top speed":"110 km/h", Production:"316,000"},
+  },
+  {
+    id:24, brand:"Renault", name:"4L", years:"1961–1994", era:"60s", flag:"🇫🇷", emoji:"🏕️",
+    wiki_fr:"Renault_4", wiki_en:"Renault_4",
+    specs_fr:{Pays:"France", Moteur:"747–1 108 cm³", "Vitesse max":"130 km/h", Production:"8 135 424"},
+    specs_en:{Country:"France", Engine:"747–1,108 cc", "Top speed":"130 km/h", Production:"8,135,424"},
+  },
+  {
+    id:25, brand:"Renault", name:"4CV", years:"1947–1961", era:"40s", flag:"🇫🇷", emoji:"🎀",
+    wiki_fr:"Renault_4CV", wiki_en:"Renault_4CV",
+    specs_fr:{Pays:"France", Moteur:"747–760 cm³", "Vitesse max":"100 km/h", Production:"1 105 547"},
+    specs_en:{Country:"France", Engine:"747–760 cc", "Top speed":"100 km/h", Production:"1,105,547"},
+  },
+  {
+    id:26, brand:"Mini", name:"Cooper", years:"1961–2000", era:"60s", flag:"🇬🇧", emoji:"🎯",
+    wiki_fr:"Mini_(automobile)", wiki_en:"Mini_(marque)",
+    specs_fr:{Pays:"Royaume-Uni", Moteur:"848–1 275 cm³", "Vitesse max":"153 km/h", Production:"5 387 862"},
+    specs_en:{Country:"UK", Engine:"848–1,275 cc", "Top speed":"153 km/h", Production:"5,387,862"},
+  },
+  {
+    id:27, brand:"Ford", name:"GT40", years:"1964–1969", era:"60s", flag:"🇺🇸", emoji:"🏁",
+    wiki_fr:"Ford_GT40", wiki_en:"Ford_GT40",
+    specs_fr:{Pays:"USA / Royaume-Uni", Moteur:"4 195–7 015 cm³", "Vitesse max":"335 km/h", Production:"107"},
+    specs_en:{Country:"USA / UK", Engine:"4,195–7,015 cc", "Top speed":"335 km/h", Production:"107"},
+  },
+];
+
+const ERAS = ["Tous","30s","40s","50s","60s","70s","80s","2010s"];
+
+const OTHER_APPS = [
+  {name:"Rois de France",           id:"6761322546", sub:"44 monarques · 7 dynasties"},
+  {name:"Comédie Française",        id:"6761993002", sub:"41 membres · 5 époques"},
+  {name:"Institut de France",       id:"6761769529", sub:"5 académies · 100 membres"},
+  {name:"Présidents Français",      id:"6761324444", sub:"25 présidents de la République"},
+  {name:"Sénat Paris",              id:"6761363063", sub:"Présidents du Sénat"},
+  {name:"Assemblée Paris",          id:"6761361079", sub:"Présidents de l'Assemblée"},
+  {name:"Panthéon Paris",           id:"6761335268", sub:"30 grandes figures"},
+  {name:"Maréchaux Napoléon",       id:"6761374601", sub:"26 maréchaux d'Empire"},
+  {name:"Académie française",       id:"6761334922", sub:"40 Immortels"},
+  {name:"Capitales d'Europe",       id:"6761421276", sub:"40 capitales européennes"},
+  {name:"Compositeurs",             id:"6761656628", sub:"34 compositeurs classiques"},
+  {name:"Arbres de France",         id:"6761685637", sub:"Essences remarquables"},
+  {name:"Basilique Saint-Denis",    id:"6761709149", sub:"Nécropole royale"},
+  {name:"Cimetières Paris",         id:"6760751055", sub:"47 personnalités"},
+  {name:"Musées Paris",             id:"6760890465", sub:"37 musées parisiens"},
+  {name:"Théâtres Paris",           id:"6760929391", sub:"39 théâtres"},
+  {name:"Scènes Paris",             id:"6761293938", sub:"23 salles de spectacle"},
+  {name:"Pays UE",                  id:"6762346365", sub:"27 pays de l'Union Européenne"},
+  {name:"Leaders Européens",        id:"6762263227", sub:"Chefs d'état européens"},
+  {name:"Présidents Américains",    id:"6762256169", sub:"Présidents des États-Unis"},
+  {name:"Familles Royales",         id:"6762098486", sub:"7 familles · 42 souverains"},
+  {name:"Etats Unis",               id:"6762370541", sub:"50 états américains"},
+  {name:"MesRestaurants",           id:"6760617965", sub:"Mes restaurants favoris"},
+  {name:"Cave Manager",             id:"6760126279", sub:"Gérez votre cave à vins"},
+  {name:"MediSafe-Pharmacie",       id:"6761271324", sub:"Scanner vos médicaments"},
+  {name:"Frigo Manager",            id:"6759219383", sub:"Gérez votre réfrigérateur"},
+  {name:"Belote Calc",              id:"1483084001",  sub:"Calculateur de belote"},
+  {name:"Tarots Calc",              id:"1481989301",  sub:"Calculateur de tarot"},
+  {name:"Toi ou Moi",               id:"1475884625",  sub:"Le jeu des questions"},
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let lang      = 'fr';
+let activeEra = 'Tous';
+let activeTab = 'liste';
+let imgCache  = {};
+try { imgCache = JSON.parse(localStorage.getItem('vdl3_imgs') || '{}'); } catch(e){}
+let currentCar = null;
+let ovLang     = 'fr';
+let quizQ = [], quizIdx = 0, quizScore = 0, quizAnswered = false;
+
+/* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+function saveImgCache(){ try{localStorage.setItem('vdl3_imgs', JSON.stringify(imgCache));}catch(e){} }
+
+/* ═══════════════════════════════════════════
+   FILTRES
+═══════════════════════════════════════════ */
+function buildFilters(){
+  const bar = document.getElementById('filter-bar');
+  bar.innerHTML = ERAS.map(e => {
+    const label = e === 'Tous' ? (lang==='fr'?'Toutes':'All') : e;
+    return `<button class="fbtn ${e===activeEra?'active':''}" onclick="setEra('${e}')">${label}</button>`;
+  }).join('');
+}
+
+function setEra(e){ activeEra=e; buildFilters(); renderListe(); }
+
+function filtered(){ return activeEra==='Tous' ? CARS : CARS.filter(c=>c.era===activeEra); }
+
+/* ═══════════════════════════════════════════
+   LISTE
+═══════════════════════════════════════════ */
+function renderListe(){
+  document.getElementById('main').innerHTML = '<div class="car-list" id="car-list"></div>';
+  const list = document.getElementById('car-list');
+  filtered().forEach(car => {
+    const img = imgCache[car.id];
+    const thumbInner = img
+      ? `<img src="${img}" alt="${car.name}" loading="lazy">`
+      : `<div class="car-thumb-ph">${car.emoji}</div>`;
+    list.insertAdjacentHTML('beforeend',`
+      <div class="car-row" onclick="openDetail(${car.id})">
+        <div class="car-thumb">
+          ${thumbInner}
+          <div class="era-tag">${car.era}</div>
+          <div class="flag-tag">${car.flag}</div>
+        </div>
+        <div class="car-meta">
+          <div class="car-brand">${car.brand}</div>
+          <div class="car-name">${car.name}</div>
+          <div class="car-sub">${car.years}</div>
+        </div>
+        <div class="car-chevron">›</div>
+      </div>`);
+    if(!img) lazyLoadThumb(car);
+  });
+}
+
+function lazyLoadThumb(car){
+  const tryFetch = (language) => {
+    const title = encodeURIComponent(language==='fr'?car.wiki_fr:car.wiki_en);
+    return fetch(`https://${language}.wikipedia.org/w/api.php?action=query&titles=${title}&prop=pageimages&pithumbsize=300&format=json&origin=*`)
+      .then(r=>r.json())
+      .then(d=>{
+        const pg = Object.values(d.query.pages)[0];
+        if(pg && pg.thumbnail) return pg.thumbnail.source;
+        return null;
+      });
+  };
+  tryFetch(lang)
+    .then(src => src ? src : tryFetch(lang==='fr'?'en':'fr'))
+    .then(src => {
+      if(!src) return;
+      imgCache[car.id] = src;
+      saveImgCache();
+      document.querySelectorAll('.car-row').forEach(row=>{
+        if(row.getAttribute('onclick')===`openDetail(${car.id})`){
+          const ph = row.querySelector('.car-thumb-ph');
+          if(ph){
+            const img = document.createElement('img');
+            img.src = src; img.alt = car.name; img.loading = 'lazy';
+            ph.replaceWith(img);
+          }
+        }
+      });
+    }).catch(()=>{});
+}
+
+/* ═══════════════════════════════════════════
+   DÉTAIL
+═══════════════════════════════════════════ */
+function openDetail(id){
+  currentCar = CARS.find(c=>c.id===parseInt(id));
+  if(!currentCar) return;
+  ovLang = lang;
+  fillDetail();
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('ov-body').scrollTop = 0;
+}
+
+function closeDetail(){
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function toggleOvLang(){
+  ovLang = ovLang==='fr'?'en':'fr';
+  document.getElementById('ov-lang-btn').textContent = ovLang==='fr'?'🇫🇷':'🇬🇧';
+  fillDetail();
+}
+
+function fillDetail(){
+  const car = currentCar;
+  document.getElementById('ov-brand').textContent = car.brand;
+  document.getElementById('ov-name').textContent  = car.name;
+  document.getElementById('ov-lang-btn').textContent = ovLang==='fr'?'🇫🇷':'🇬🇧';
+
+  // Specs
+  const specs = ovLang==='fr' ? car.specs_fr : car.specs_en;
+  const keys   = Object.keys(specs);
+  document.getElementById('ov-specs').innerHTML = keys.map(k=>
+    `<div class="spec-box"><div class="spec-lbl">${k}</div><div class="spec-val">${specs[k]}</div></div>`
+  ).join('');
+
+  // Hero
+  const hero = document.getElementById('ov-hero');
+  const ph   = document.getElementById('ov-hero-ph');
+  ph.textContent = car.emoji;
+  const prevImg = hero.querySelector('img');
+  if(prevImg) prevImg.remove();
+  const loader = document.createElement('div');
+  loader.className = 'spinner';
+  hero.appendChild(loader);
+
+  // Hero avec fallback EN si pas d'image FR
+  const tryHero = (language) => {
+    const title = encodeURIComponent(language==='fr'?car.wiki_fr:car.wiki_en);
+    return fetch(`https://${language}.wikipedia.org/w/api.php?action=query&titles=${title}&prop=pageimages&pithumbsize=800&format=json&origin=*`)
+      .then(r=>r.json())
+      .then(d=>{
+        const pg = Object.values(d.query.pages)[0];
+        if(pg && pg.thumbnail) return pg.thumbnail.source;
+        return null;
+      });
+  };
+  tryHero(ovLang)
+    .then(src => src ? src : tryHero(ovLang==='fr'?'en':'fr'))
+    .then(src => {
+      loader.remove();
+      if(src){
+        ph.style.display='none';
+        const img = document.createElement('img');
+        img.src = src; img.alt = car.name;
+        hero.appendChild(img);
+        if(!imgCache[car.id]){ imgCache[car.id]=src; saveImgCache(); }
+      } else { ph.style.display='flex'; }
+    }).catch(()=>{ loader.remove(); ph.style.display='flex'; });
+
+  // Text
+  const wikiTitle = encodeURIComponent(ovLang==='fr'?car.wiki_fr:car.wiki_en);
+  const textEl = document.getElementById('ov-text');
+  textEl.textContent = ovLang==='fr'?'Chargement…':'Loading…';
+  textEl.className = 'ov-text chargement';
+  document.getElementById('ov-link').innerHTML = '';
+
+  fetch(`https://${ovLang}.wikipedia.org/api/rest_v1/page/summary/${wikiTitle}`)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.extract){
+        textEl.textContent = d.extract;
+        textEl.className = 'ov-text';
+        const url = d.content_urls?.desktop?.page || `https://${ovLang}.wikipedia.org/wiki/${wikiTitle}`;
+        document.getElementById('ov-link').innerHTML =
+          `Wikipedia — <span onclick="window.open('${url}','_blank')">Lire l'article complet</span>`;
+      } else {
+        textEl.textContent = ovLang==='fr'?'Description non disponible.':'Description not available.';
+        textEl.className = 'ov-text';
+      }
+    }).catch(()=>{
+      textEl.textContent = 'Erreur de chargement.';
+      textEl.className = 'ov-text';
+    });
+}
+
+/* ═══════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════ */
+function switchTab(tab){
+  activeTab = tab;
+  ['liste','quiz'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+  });
+  document.getElementById('filter-bar').style.display = tab==='liste'?'flex':'none';
+  if(tab==='liste') renderListe();
+  else              renderQuizStart();
+}
+
+/* ═══════════════════════════════════════════
+   LANG TOGGLE
+═══════════════════════════════════════════ */
+function toggleLang(){
+  lang = lang==='fr'?'en':'fr';
+  document.getElementById('btn-lang-main').textContent = lang==='fr'?'🇫🇷':'🇬🇧';
+  document.getElementById('sub-count').textContent = lang==='fr'?'27 Icônes de l\'Automobile':'27 Automotive Icons';
+  document.getElementById('t-liste').textContent = lang==='fr'?'Collection':'Collection';
+  buildFilters();
+  if(activeTab==='liste') renderListe();
+}
+
+/* ═══════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════ */
+function renderQuizStart(){
+  document.getElementById('main').innerHTML = `
+    <div class="quiz-wrap">
+      <div class="quiz-start-area">
+        <div class="quiz-icon">🏁</div>
+        <div class="quiz-title">${lang==='fr'?'QUIZ AUTOMOBILE':'CAR QUIZ'}</div>
+        <div class="quiz-subtitle">${lang==='fr'?'10 questions aléatoires':'10 random questions'}</div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">${lang==='fr'?'COMMENCER':'START QUIZ'}</button>
+    </div>`;
+}
+
+function startQuiz(){
+  const pool = [...CARS].sort(()=>Math.random()-0.5).slice(0,10);
+  quizQ = pool.map(car => {
+    const type = Math.floor(Math.random()*3);
+    let q, correct, wrongPool;
+    if(type===0){
+      q = lang==='fr'?'Quelle marque a fabriqué cette voiture ?':'Which brand made this car?';
+      correct = car.brand;
+      wrongPool = [...new Set(CARS.filter(c=>c.brand!==car.brand).map(c=>c.brand))];
+    } else if(type===1){
+      q = lang==='fr'?'Quelle est cette voiture légendaire ?':'What is this legendary car?';
+      correct = car.name;
+      wrongPool = CARS.filter(c=>c.name!==car.name).map(c=>c.name);
+    } else {
+      q = lang==='fr'?'Dans quelle décennie ce modèle a-t-il été lancé ?':'In which decade was this model launched?';
+      correct = car.era;
+      wrongPool = ERAS.filter(e=>e!=='Tous'&&e!==car.era);
+    }
+    const opts = [correct, ...wrongPool.sort(()=>Math.random()-0.5).slice(0,3)].sort(()=>Math.random()-0.5);
+    return {car, q, correct, opts};
+  });
+  quizIdx=0; quizScore=0;
+  renderQuizQ();
+}
+
+function renderQuizQ(){
+  const q = quizQ[quizIdx];
+  quizAnswered = false;
+  const img = imgCache[q.car.id];
+  document.getElementById('main').innerHTML = `
+    <div class="quiz-wrap">
+      <div class="quiz-card">
+        <div class="quiz-prog">${lang==='fr'?'Question':'Question'} ${quizIdx+1}/10 — ${quizScore} ✓</div>
+        <div class="quiz-q">${q.q}</div>
+        <div class="quiz-img-wrap">
+          ${img?`<img src="${img}" alt="">`:`<div class="quiz-ph">${q.car.emoji}</div>`}
+        </div>
+        <div class="quiz-opts" id="qopts">
+          ${q.opts.map(o=>`<button class="quiz-opt" onclick="answer('${o.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+        </div>
+        <button class="quiz-next-btn" id="qnext" onclick="nextQ()">
+          ${quizIdx<9?(lang==='fr'?'Question suivante →':'Next Question →'):(lang==='fr'?'Voir les résultats →':'See results →')}
+        </button>
+      </div>
+    </div>`;
+}
+
+function answer(val, btn){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQ[quizIdx];
+  document.querySelectorAll('.quiz-opt').forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.correct) b.classList.add('ok');
+  });
+  if(val===q.correct){ btn.classList.add('ok'); quizScore++; }
+  else               { btn.classList.add('ko'); }
+  document.getElementById('qnext').style.display = 'block';
+}
+
+function nextQ(){
+  quizIdx++;
+  if(quizIdx>=10) renderQuizScore();
+  else renderQuizQ();
+}
+
+function renderQuizScore(){
+  const medals=['😔','😐','🙂','😊','😁','🏅','🥉','🥈','🥇','🏆','🌟'];
+  document.getElementById('main').innerHTML = `
+    <div class="quiz-wrap">
+      <div class="quiz-score-wrap">
+        <div class="score-medal">${medals[quizScore]||'🌟'}</div>
+        <div class="score-num">${quizScore}/10</div>
+        <div class="score-label">${lang==='fr'?'bonne(s) réponse(s)':'correct answer(s)'}</div>
+        <button class="btn-start" onclick="startQuiz()">${lang==='fr'?'REJOUER':'PLAY AGAIN'}</button>
+      </div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════ */
+function openSettings(){
+  document.getElementById('settings-bg').classList.add('open');
+  const list = document.getElementById('app-items');
+  list.innerHTML = OTHER_APPS.map(a=>`
+    <div class="app-item" onclick="window.open('https://apps.apple.com/app/id${a.id}','_system')">
+      <img id="aico-${a.id}" src="" alt="${a.name}">
+      <div class="app-item-info">
+        <div class="app-item-name">${a.name}</div>
+        <div class="app-item-sub">${a.sub}</div>
+      </div>
+      <span style="color:var(--rouge);font-size:16px">›</span>
+    </div>`).join('');
+  OTHER_APPS.forEach(a=>{
+    const cb = 'icb'+a.id;
+    window[cb] = d=>{ if(d.results&&d.results[0]) document.getElementById('aico-'+a.id).src=d.results[0].artworkUrl60; };
+    const s = document.createElement('script');
+    s.src = `https://itunes.apple.com/lookup?id=${a.id}&callback=${cb}`;
+    document.body.appendChild(s);
+  });
+}
+
+function closeSettings(){ document.getElementById('settings-bg').classList.remove('open'); }
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+buildFilters();
+renderListe();
+</script>
+</body>
+</html>

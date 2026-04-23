@@ -1,0 +1,20 @@
+{
+  "appId": "com.michel.garlandat.voituresLegende",
+  "appName": "Voitures de Legende",
+  "webDir": "App/public",
+  "bundledWebRuntime": false,
+  "backgroundColor": "#04101e",
+  "ios": {
+    "backgroundColor": "#04101e",
+    "contentInset": "automatic",
+    "scrollEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    },
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
